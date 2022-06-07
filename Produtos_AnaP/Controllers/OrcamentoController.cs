@@ -16,19 +16,15 @@ namespace OcamentoApi.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public IActionResult GetOrcamento()
+        [HttpGet("{id}")]
+        //[ProducesResponseType(typeof(Orcamento), StatusCodes.Status200OK)]
+        public ActionResult<Orcamento> GetOrcamento([FromRoute] int id)
         {
-            var orcamento = new Orcamento(); 
+            //_logger.LogInformation($"API invoked at {DateTime.Now}");
+            //var orcamento = id; // ProcessaOrcamentos(tipoDoProduto, quantidade)
+            var orcamento = new Orcamento(1, new Vendedor(1), new Produtos());
             
-            orcamento.Produtos = new Produtos();
-            orcamento.Vendedor = new Vendedor();
-            var a = orcamento.Produtos.Valor = 50;
-            orcamento.Produtos.Nome = "Grampeador";
-            orcamento.Produtos.Id = 1;
-            orcamento.Vendedor.Id = 1;
-            orcamento.Vendedor.Nome = "Ana";
-            orcamento.ComissaoVendedor = a * 0.022 ;
+            
             return Ok(orcamento);
 
         }

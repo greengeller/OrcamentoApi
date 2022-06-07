@@ -2,8 +2,16 @@
 {
     public class Orcamento
     {
-        
-        
+       
+
+        public Orcamento(int id, Vendedor vendedor, Produtos produtos)
+        {
+            Id = id;
+            Vendedor = vendedor;
+            Produtos = produtos;
+            ComissaoVendedor = produtos.Valor * 0.20;
+        }
+
         public int Id { get; set; }
        
         public Vendedor Vendedor { get; set; }
@@ -13,11 +21,7 @@
         public double ComissaoVendedor { get; set; }
 
     
-        public double CalculaComissaoVendedor(double valor)
-        {
-           var a = valor * 0.02;
-           return a;
-        }
+        
     }
 
     
