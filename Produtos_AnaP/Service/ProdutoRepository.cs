@@ -12,7 +12,7 @@ namespace OcamentoApi.Service
                 {
                     Id = 1,
                     Nome = "Borracha",
-                    Valor = 2.5
+                    Valor = 2.52
                 },
 
                 new Produtos

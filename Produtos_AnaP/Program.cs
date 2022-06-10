@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using OcamentoApi.Controllers;
 using OcamentoApi.Service;
 
@@ -9,8 +10,15 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<OrcamentoController, OrcamentoController>();
 builder.Services.AddScoped<ProdutoRepository, ProdutoRepository>();
+builder.Services.AddScoped<VendedorRepository, VendedorRepository>();
+builder.Services.AddScoped<OrcamentoService, OrcamentoService>();
+builder.Services.AddControllers();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.ResolveConflictingActions(x => x.First());
+});
+
 
 
 var app = builder.Build();

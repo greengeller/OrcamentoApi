@@ -2,12 +2,14 @@
 {
     public class Vendedor
     {
-        public Vendedor(int id)
+        public Vendedor()
         {
-            Id = id;
+           
 
         }
         public int Id { get; set; }
         public string Nome { get; set; }
+
+    
     }
 }
