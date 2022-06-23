@@ -1,6 +1,6 @@
-﻿using OcamentoApi.Models;
+﻿using OrcamentoApi.Models;
 
-namespace OcamentoApi.Service
+namespace OrcamentoApi.Service
 {
     public class VendedorRepository
     {

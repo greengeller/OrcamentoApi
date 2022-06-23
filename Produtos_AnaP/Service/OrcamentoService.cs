@@ -1,15 +1,24 @@
-﻿using OcamentoApi.Models;
+﻿using OrcamentoApi.Data;
+using OrcamentoApi.Models;
 
-namespace OcamentoApi.Service
+namespace OrcamentoApi.Service
 {
     public class OrcamentoService
     {
-
-     
-        public Orcamento AdicionaOrcamento(int id, Produtos produtos, Vendedor vendedor, int quantidadeProduto)
+        private readonly OrcamentoContext _context;
+        public OrcamentoService(OrcamentoContext context)
         {
-            return new Orcamento(id, vendedor, produtos, quantidadeProduto);
+            _context = context;
         }
+
+        public Orcamento AdicionaOrcamento(Produtos produtos, Vendedor vendedor, int quantidadeProduto)
+        {
+            var orcamento = new Orcamento(vendedor, produtos, quantidadeProduto);
+            return orcamento;
+        }
+
+        
+
 
     }
 }

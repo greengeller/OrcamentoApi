@@ -1,8 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OcamentoApi.Models;
-using OcamentoApi.Service;
+using Microsoft.Extensions.Logging;
+using OrcamentoApi.Data;
+using OrcamentoApi.Models;
+using OrcamentoApi.Service;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace OcamentoApi.Controllers
+namespace OrcamentoApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -11,38 +16,40 @@ namespace OcamentoApi.Controllers
 
         private readonly ILogger<OrcamentoController> _logger;
         private OrcamentoService _orcamentoService;
-        private ProdutoRepository _produtoRepository;
-        private VendedorRepository _vendedorRepository;
+        private OrcamentoContext _context;
+       
 
-        public OrcamentoController(ILogger<OrcamentoController> logger, OrcamentoService orcamentoService, ProdutoRepository produtoRepository, VendedorRepository vendedorRepository)
+        public OrcamentoController(ILogger<OrcamentoController> logger, OrcamentoService orcamentoService, OrcamentoContext context)
         {
             _logger = logger;
             _orcamentoService = orcamentoService;
-            _produtoRepository = produtoRepository;
-            _vendedorRepository = vendedorRepository;
+            _context = context;
+
         }
 
-               
-        [HttpGet] 
+        [HttpGet]
         public async Task<ActionResult<Orcamento>> GetOrcamento([FromQuery] OrcamentoRequest orcamentoRequest)
         {
-            var produtos = _produtoRepository.GetAllProdutos().FirstOrDefault(x => x.Nome == orcamentoRequest.NomeProduto);
-            var vendedores = _vendedorRepository.GetAllVendedor();
+            var produtos = _context.Produtos.FirstOrDefault(x => x.Nome == orcamentoRequest.NomeProduto);
             var quantidadeProduto = orcamentoRequest.Quantidade;
-            var Id = new Random().Next();
             var random = new Random();
+            var vendedores = _context.Vendedor.ToList();
+
             if (produtos != null)
             {
-                var orcamento = _orcamentoService.AdicionaOrcamento(Id, produtos, vendedores.ElementAt(random.Next(vendedores.Count())), quantidadeProduto);
+                var orcamento = _orcamentoService.AdicionaOrcamento(produtos, vendedores[random.Next(vendedores.Count - 1)], quantidadeProduto);
                 if (orcamento != null)
                 {
+                    _context.Add(orcamento);
+                    _context.SaveChanges();
                     return Ok(orcamento);
                 }
             }
-            
+
             return NotFound();
         }
-    } 
-   
+
+    }
 }
 
+           

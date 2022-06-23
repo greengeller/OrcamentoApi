@@ -1,25 +1,50 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OcamentoApi.Models;
-using OcamentoApi.Service;
+using Microsoft.EntityFrameworkCore;
+using OrcamentoApi.Data;
+using OrcamentoApi.Models;
+using OrcamentoApi.Service;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace OcamentoApi.Controllers
+namespace OrcamentoApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class ProdutoController : ControllerBase
     {
-        private readonly ProdutoRepository _produtoRepository;
+        private OrcamentoContext _context;
 
-        public ProdutoController(ProdutoRepository produtoRepository)
+        public ProdutoController(OrcamentoContext context)
         {
-            _produtoRepository = produtoRepository;
+            _context = context;
         }
 
         [HttpGet]
-        public Produtos[] Get()
+        public async Task<IActionResult> GetProduto()
         {
-            return _produtoRepository.GetAllProdutos();
+            var produto = _context.Produtos;
+            return Ok(produto);
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProduto(int id)
+        {
+            var produto = _context.Produtos.FirstOrDefault(x => x.Id == id);
+            return Ok(produto);
+        }
+        
+        
+        [HttpPost]
+        public IActionResult AdicionaProduto([FromBody] Produtos produtos)
+        {
+
+            _context.Add(produtos);
+            _context.SaveChanges();
+            if (produtos != null)
+            {
+                return Ok(produtos);
+            }
+            return NotFound();
+        }
     }
 }
