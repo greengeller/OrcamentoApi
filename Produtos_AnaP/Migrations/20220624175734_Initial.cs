@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
 
 namespace OrcamentoApi.Migrations
 {
@@ -12,9 +13,9 @@ namespace OrcamentoApi.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Nome = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: false),
-                    Valor = table.Column<double>(type: "double", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nome = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Valor = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -26,8 +27,8 @@ namespace OrcamentoApi.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Nome = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nome = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -39,10 +40,10 @@ namespace OrcamentoApi.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    ProdutosId = table.Column<int>(type: "int", nullable: true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProdutosId = table.Column<int>(type: "int", nullable: false),
                     Quantidade = table.Column<int>(type: "int", nullable: false),
-                    ValorTotal = table.Column<double>(type: "double", nullable: false),
+                    ValorTotal = table.Column<double>(type: "float", nullable: false),
                     VendedorId = table.Column<int>(type: "int", nullable: false),
                     ProdutoId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -54,7 +55,7 @@ namespace OrcamentoApi.Migrations
                         column: x => x.ProdutosId,
                         principalTable: "Produtos",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Orcamento_Vendedor_VendedorId",
                         column: x => x.VendedorId,

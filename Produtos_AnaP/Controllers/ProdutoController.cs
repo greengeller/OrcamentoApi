@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using OrcamentoApi.Data;
 using OrcamentoApi.Models;
-using OrcamentoApi.Service;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace OrcamentoApi.Controllers
 {
@@ -20,7 +16,7 @@ namespace OrcamentoApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProduto()
+        public async Task<IActionResult> GetAllProduto()
         {
             var produto = _context.Produtos;
             return Ok(produto);
@@ -30,7 +26,13 @@ namespace OrcamentoApi.Controllers
         public async Task<IActionResult> GetProduto(int id)
         {
             var produto = _context.Produtos.FirstOrDefault(x => x.Id == id);
-            return Ok(produto);
+            if(produto != null)
+            {
+                return Ok(produto);
+            }
+
+            return NotFound("Esse Produto não existe");
+           
         }
         
         
