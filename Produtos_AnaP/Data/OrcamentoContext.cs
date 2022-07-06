@@ -21,10 +21,7 @@ namespace OrcamentoApi.Data
             modelBuilder.Entity<Orcamento>().HasKey(t => t.Id);
 
             modelBuilder.Entity<Vendedor>().HasKey(t => t.Id);
-
         }
-
     }
-
 }
 

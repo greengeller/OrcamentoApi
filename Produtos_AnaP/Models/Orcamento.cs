@@ -2,11 +2,9 @@
 {
     public class Orcamento
     {
-
         public Orcamento()
         {
         }
-
         public Orcamento(Vendedor vendedor, Produtos produtos, int quantidadeProduto)
         {
             Vendedor = vendedor;
@@ -16,8 +14,8 @@
         }
 
         public int Id { get; set; }
-        public Vendedor Vendedor { get; set; }
-        public Produtos Produtos { get; set; }
+        public Vendedor? Vendedor { get; set; }
+        public Produtos? Produtos { get; set; }
         public int Quantidade { get; set; }
         public double ValorTotal { get; set; }
         public int VendedorId { get; set; }

@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using OrcamentoApi.Data;
 using OrcamentoApi.Models;
+using OrcamentoApi.Request;
 using OrcamentoApi.Service;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace OrcamentoApi.Controllers
 {
@@ -13,23 +10,22 @@ namespace OrcamentoApi.Controllers
     [Route("[controller]")]
     public class OrcamentoController : ControllerBase
     {
-
         private readonly ILogger<OrcamentoController> _logger;
-        private OrcamentoService _orcamentoService;
-        private OrcamentoContext _context;
-       
+        private readonly OrcamentoService _orcamentoService;
+        private readonly OrcamentoContext _context;
 
         public OrcamentoController(ILogger<OrcamentoController> logger, OrcamentoService orcamentoService, OrcamentoContext context)
         {
             _logger = logger;
             _orcamentoService = orcamentoService;
             _context = context;
-
         }
 
-        [HttpGet]
-        public async Task<ActionResult<Orcamento>> GetOrcamento([FromQuery] OrcamentoRequest orcamentoRequest)
+        [HttpPost]
+        public ActionResult<Orcamento> GetOrcamento([FromBody] OrcamentoRequest orcamentoRequest)
         {
+            _logger.LogInformation("Start inserting Orcamentos");
+
             var produtos = _context.Produtos.FirstOrDefault(x => x.Nome == orcamentoRequest.NomeProduto);
             var quantidadeProduto = orcamentoRequest.Quantidade;
             var random = new Random();
@@ -42,13 +38,19 @@ namespace OrcamentoApi.Controllers
                 {
                     _context.Add(orcamento);
                     _context.SaveChanges();
+                    _logger.LogInformation("Success inserting Orcamentos");
+
                     return Ok(orcamento);
                 }
             }
-
             return NotFound();
         }
 
+        [HttpGet("GetAll")]
+        public List<Orcamento> GetAllOrcamentos()
+        {
+            return _context.Orcamento.ToList();
+        }
     }
 }
 

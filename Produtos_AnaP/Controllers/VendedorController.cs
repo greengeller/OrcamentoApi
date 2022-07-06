@@ -3,31 +3,28 @@ using OrcamentoApi.Data;
 using OrcamentoApi.Models;
 using OrcamentoApi.Service;
 
-namespace OrcamentoApi.Controllers
+namespace OrcamentoApi.Controllers63
 {
     [ApiController]
     [Route("[controller]")]
     public class VendedorController : ControllerBase
     {
         private readonly OrcamentoContext _context;
-        private readonly OrcamentoService _orcamentoService;
-
-
+       
         public VendedorController(OrcamentoContext context, OrcamentoService orcamentoService)
         {
-            _context = context;
-            _orcamentoService = orcamentoService;
-
+            _context = context;        
         }
+
         [HttpGet]
-        public async Task<IActionResult> GetVendedor()
+        public IActionResult GetVendedor()
         {
             var vendedor = _context.Vendedor;
             return Ok(vendedor);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetVendedor(int id)
+        public IActionResult GetVendedor(int id)
         {
             var vendedor = _context.Vendedor.FirstOrDefault(x => x.Id == id);
 
@@ -36,16 +33,15 @@ namespace OrcamentoApi.Controllers
                 var orcamento = _context.Orcamento;
                 var query = from Orcamento in orcamento where Orcamento.VendedorId == id select Orcamento.ValorTotal;
                 var somaValorTotal = query.Sum();
-                VendedorResponse vendedorResponse = new VendedorResponse(somaValorTotal);
-                vendedorResponse.Id = id;
-                vendedorResponse.Nome = vendedor.Nome;
+                VendedorResponse vendedorResponse = new(somaValorTotal)
+                {
+                    Id = id,
+                    Nome = vendedor.Nome
+                };
 
                 return Ok(vendedorResponse);
-                
             }
-           
-                return NotFound("Esse vendedor não existe");
-
+            return NotFound("Esse vendedor não existe");
         }
 
         [HttpPost]

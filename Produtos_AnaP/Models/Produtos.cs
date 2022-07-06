@@ -4,7 +4,6 @@
     {
         public Produtos()
         {
-
         }
 
         public Produtos(int id, string nome, double valor)
@@ -15,12 +14,8 @@
         }
                
         public int Id { get; set; }
-        
-        public string Nome { get; set; }
-
+        public string? Nome { get; set; }
         public double Valor { get; set; }
-
-      
     }
 }
 

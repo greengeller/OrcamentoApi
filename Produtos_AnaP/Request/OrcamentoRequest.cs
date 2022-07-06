@@ -1,4 +1,4 @@
-﻿namespace OrcamentoApi
+﻿namespace OrcamentoApi.Request
 {
     public class OrcamentoRequest
     {

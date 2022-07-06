@@ -1,9 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using OrcamentoApi;
 using OrcamentoApi.Data;
 using OrcamentoApi.Service;
 
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.Configure<RabbitMqConfiguration>(builder.Configuration.GetSection("RabbitMqConfiguration"));
 
 // Add services to the container.
 
@@ -13,6 +15,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<OrcamentoService, OrcamentoService>();
 builder.Services.AddDbContext<OrcamentoContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("OrcamentoApi")));
+builder.Services.AddHostedService<ProcessMessageConsumer>();
+
 
 builder.Services.AddSwaggerGen(c =>
 {

@@ -4,7 +4,6 @@
     {
         public VendedorResponse()
         {
-
         }
 
         public VendedorResponse(double valorTotalOrcamento)
@@ -13,8 +12,7 @@
         }
 
         public int Id { get; set; }
-        public string Nome { get; set; }
+        public string? Nome { get; set; }
         public double Comissao { get; set; }
-
     }
 }
