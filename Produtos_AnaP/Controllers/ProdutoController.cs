@@ -44,5 +44,31 @@ namespace OrcamentoApi.Controllers
             }
             return NotFound();
         }
+
+        [HttpPut]
+        public IActionResult AtualizarProduto(int id, [FromBody] Produtos novoProduto)
+        {
+            var produto = _context.Produtos.FirstOrDefault(x => x.Id == id);
+
+            if (id != null)
+            {               
+                produto.Nome = novoProduto.Nome;
+                produto.Valor = novoProduto.Valor;
+
+                _context.Produtos.Update(produto);
+                _context.SaveChanges();
+                return Ok(produto);
+            }
+            return NotFound();
+        }
+
+        [HttpDelete]
+        public IActionResult ExcluirProduto(int id)
+        {
+            var produto = _context.Produtos.FirstOrDefault(x => x.Id == id);
+            _context.Produtos.Remove(produto);
+            _context.SaveChanges();
+            return Ok();
+        }
     }
 }
