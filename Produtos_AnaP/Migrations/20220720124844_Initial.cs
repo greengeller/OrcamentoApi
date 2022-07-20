@@ -36,28 +36,27 @@ namespace OrcamentoApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Orcamento",
+                name: "Orcamentos",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    VendedorId = table.Column<int>(type: "int", nullable: false),
                     ProdutosId = table.Column<int>(type: "int", nullable: false),
                     Quantidade = table.Column<int>(type: "int", nullable: false),
-                    ValorTotal = table.Column<double>(type: "float", nullable: false),
-                    VendedorId = table.Column<int>(type: "int", nullable: false),
-                    ProdutoId = table.Column<int>(type: "int", nullable: false)
+                    ValorTotal = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Orcamento", x => x.Id);
+                    table.PrimaryKey("PK_Orcamentos", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Orcamento_Produtos_ProdutosId",
+                        name: "FK_Orcamentos_Produtos_ProdutosId",
                         column: x => x.ProdutosId,
                         principalTable: "Produtos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Orcamento_Vendedor_VendedorId",
+                        name: "FK_Orcamentos_Vendedor_VendedorId",
                         column: x => x.VendedorId,
                         principalTable: "Vendedor",
                         principalColumn: "Id",
@@ -65,20 +64,20 @@ namespace OrcamentoApi.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orcamento_ProdutosId",
-                table: "Orcamento",
+                name: "IX_Orcamentos_ProdutosId",
+                table: "Orcamentos",
                 column: "ProdutosId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orcamento_VendedorId",
-                table: "Orcamento",
+                name: "IX_Orcamentos_VendedorId",
+                table: "Orcamentos",
                 column: "VendedorId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Orcamento");
+                name: "Orcamentos");
 
             migrationBuilder.DropTable(
                 name: "Produtos");

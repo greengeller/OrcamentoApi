@@ -9,7 +9,6 @@ namespace OrcamentoApi.Controllers
     public class ProdutoController : ControllerBase
     {
         private readonly OrcamentoContext _context;
-
         public ProdutoController(OrcamentoContext context)
         {
             _context = context;
@@ -32,13 +31,11 @@ namespace OrcamentoApi.Controllers
             }
 
             return NotFound("Esse Produto não existe");
-
         }
 
         [HttpPost]
         public IActionResult AdicionaProduto([FromBody] Produtos produtos)
         {
-
             _context.Add(produtos);
             _context.SaveChanges();
             if (produtos != null)

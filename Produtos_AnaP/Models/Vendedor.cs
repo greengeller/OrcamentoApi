@@ -1,18 +1,21 @@
-﻿namespace OrcamentoApi.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace OrcamentoApi.Models
 {
     public class Vendedor
     {
         public Vendedor()
-        {
+        {            
         }
-
+        
         public Vendedor(int id, string nome)
         {
             Id = id;
-            Nome = nome;
+            Nome = nome;           
         }
 
-        public int Id { get; set; }
-        public string? Nome { get; set; }
+        [Key]
+        public int Id { get; set; }       
+        public string Nome { get; set; }     
     }
 }

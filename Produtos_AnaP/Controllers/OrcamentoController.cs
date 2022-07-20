@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OrcamentoApi.Data;
+using OrcamentoApi.Data.Dtos;
 using OrcamentoApi.Models;
 using OrcamentoApi.Request;
 using OrcamentoApi.Service;
@@ -22,7 +24,7 @@ namespace OrcamentoApi.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Orcamento> GetOrcamento([FromBody] OrcamentoRequest orcamentoRequest)
+        public ActionResult<Orcamento> CriarOrcamento([FromBody] OrcamentoRequest orcamentoRequest)
         {
             _logger.LogInformation("Start inserting Orcamentos");
 
@@ -51,7 +53,34 @@ namespace OrcamentoApi.Controllers
         {
             return _context.Orcamento.ToList();
         }
-    }
-}
 
-           
+        [HttpPut("{id}")]
+        public ActionResult AtualizarOrcamento(int id, [FromBody] UpdateOrcamentoDto updateOrcamentoDto)
+        {
+            var orcamento = _context.Orcamento
+                .Include(o => o.Produtos)
+                .FirstOrDefault(x => x.Id == id);
+
+            var produto = _context.Produtos.FirstOrDefault(x => x.Nome == updateOrcamentoDto.Produtos.Nome);
+            var vendedor = _context.Vendedor.FirstOrDefault(x => x.Nome == updateOrcamentoDto.Vendedor.Nome);
+
+            if(orcamento !=  null && orcamento.Produtos != null)
+            {
+                var valorTotal = updateOrcamentoDto.Quantidade * produto.Valor;
+                orcamento.ValorTotal = valorTotal;
+
+                orcamento.Quantidade = updateOrcamentoDto.Quantidade;
+                orcamento.Produtos = produto;
+                orcamento.Vendedor = vendedor;
+            
+                _context.Orcamento.Update(orcamento);
+                _context.SaveChanges();
+
+                return Ok(orcamento);
+            }
+
+            return BadRequest();
+        }
+    }
+
+}

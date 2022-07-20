@@ -17,7 +17,7 @@ namespace OrcamentoApi.Controllers
             _factory = new ConnectionFactory
             {
                 HostName = "localhost",
-                Port = 49163,
+                Port = 49154,
                 UserName = "guest",
                 Password = "guest",
             };

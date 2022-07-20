@@ -23,7 +23,8 @@ namespace OrcamentoApi
             var factory = new ConnectionFactory
             {
                 HostName = _configuration.Host,
-                Port = 49163
+                Port = 49154
+
             };
 
             _connection = factory.CreateConnection();

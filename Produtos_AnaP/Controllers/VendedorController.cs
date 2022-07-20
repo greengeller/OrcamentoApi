@@ -31,7 +31,10 @@ namespace OrcamentoApi.Controllers63
             if (vendedor != null)
             {
                 var orcamento = _context.Orcamento;
-                var query = from Orcamento in orcamento where Orcamento.VendedorId == id select Orcamento.ValorTotal;
+                var query = from Orcamento 
+                            in orcamento 
+                            where Orcamento.Vendedor.Id == id 
+                            select Orcamento.ValorTotal;
                 var somaValorTotal = query.Sum();
                 VendedorResponse vendedorResponse = new(somaValorTotal)
                 {

@@ -16,11 +16,22 @@ namespace OrcamentoApi.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Produtos>().HasKey(t => t.Id);
+            //modelBuilder.Entity<Produtos>()
+            //    .HasOne(p => p.Orcamento);
+            //    //.HasKey(t => t.Id)
 
-            modelBuilder.Entity<Orcamento>().HasKey(t => t.Id);
 
-            modelBuilder.Entity<Vendedor>().HasKey(t => t.Id);
+            //    HasKey(t => t.Id);
+
+            modelBuilder.Entity<Orcamento>()
+                .ToTable("Orcamentos");
+
+            modelBuilder.Entity<Orcamento>()
+                .HasOne(orcamento => orcamento.Vendedor);
+
+            modelBuilder.Entity<Orcamento>()
+                 .HasOne(orcamento => orcamento.Produtos);           
+
         }
     }
 }

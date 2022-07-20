@@ -11,14 +11,14 @@ using OrcamentoApi.Data;
 namespace OrcamentoApi.Migrations
 {
     [DbContext(typeof(OrcamentoContext))]
-    [Migration("20220624175734_Initial")]
+    [Migration("20220720124844_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.6")
+                .HasAnnotation("ProductVersion", "6.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -30,9 +30,6 @@ namespace OrcamentoApi.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("ProdutoId")
-                        .HasColumnType("int");
 
                     b.Property<int>("ProdutosId")
                         .HasColumnType("int");
@@ -52,7 +49,7 @@ namespace OrcamentoApi.Migrations
 
                     b.HasIndex("VendedorId");
 
-                    b.ToTable("Orcamento");
+                    b.ToTable("Orcamentos", (string)null);
                 });
 
             modelBuilder.Entity("OrcamentoApi.Models.Produtos", b =>
