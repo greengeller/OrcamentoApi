@@ -64,7 +64,7 @@ namespace OrcamentoApi.Controllers
             var produto = _context.Produtos.FirstOrDefault(x => x.Nome == updateOrcamentoDto.Produtos.Nome);
             var vendedor = _context.Vendedor.FirstOrDefault(x => x.Nome == updateOrcamentoDto.Vendedor.Nome);
 
-            if(orcamento !=  null && orcamento.Produtos != null)
+            if (orcamento != null && orcamento.Produtos != null)
             {
                 var valorTotal = updateOrcamentoDto.Quantidade * produto.Valor;
                 orcamento.ValorTotal = valorTotal;
@@ -72,7 +72,7 @@ namespace OrcamentoApi.Controllers
                 orcamento.Quantidade = updateOrcamentoDto.Quantidade;
                 orcamento.Produtos = produto;
                 orcamento.Vendedor = vendedor;
-            
+
                 _context.Orcamento.Update(orcamento);
                 _context.SaveChanges();
 
@@ -81,6 +81,15 @@ namespace OrcamentoApi.Controllers
 
             return BadRequest();
         }
-    }
 
+        [HttpDelete]
+        public ActionResult ExcluiOrcamento(int id)
+        {
+            var orcamento = _context.Orcamento.FirstOrDefault(x => x.Id == id);
+
+            _context.Orcamento.Remove(orcamento);
+            _context.SaveChanges();
+            return Ok();
+        }
+    }
 }
