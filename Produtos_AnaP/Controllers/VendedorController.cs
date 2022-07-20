@@ -10,10 +10,10 @@ namespace OrcamentoApi.Controllers63
     public class VendedorController : ControllerBase
     {
         private readonly OrcamentoContext _context;
-       
+
         public VendedorController(OrcamentoContext context, OrcamentoService orcamentoService)
         {
-            _context = context;        
+            _context = context;
         }
 
         [HttpGet]
@@ -31,9 +31,9 @@ namespace OrcamentoApi.Controllers63
             if (vendedor != null)
             {
                 var orcamento = _context.Orcamento;
-                var query = from Orcamento 
-                            in orcamento 
-                            where Orcamento.Vendedor.Id == id 
+                var query = from Orcamento
+                            in orcamento
+                            where Orcamento.Vendedor.Id == id
                             select Orcamento.ValorTotal;
                 var somaValorTotal = query.Sum();
                 VendedorResponse vendedorResponse = new(somaValorTotal)
@@ -58,5 +58,31 @@ namespace OrcamentoApi.Controllers63
             }
             return NotFound();
         }
+
+        [HttpPut]
+        public IActionResult AtualizarVendedor(int id, [FromBody] string nome)
+        {
+            var vendedor = _context.Vendedor.FirstOrDefault(x => x.Id == id);
+
+            if (id != null && vendedor != null)
+            {
+                vendedor.Nome = nome;
+
+                _context.Vendedor.Update(vendedor);
+                _context.SaveChanges();
+                return Ok(vendedor);
+            }
+            return NotFound();
+        }
+
+        [HttpDelete]
+        public IActionResult ExcluirVendedor(int id)
+        {
+            var vendedor = _context.Vendedor.FirstOrDefault(x => x.Id == id);
+            _context.Vendedor.Remove(vendedor);
+            _context.SaveChanges();
+            return Ok();
+        }
+
     }
 }

@@ -82,7 +82,34 @@ namespace OrcamentoApi.Controllers
             return BadRequest();
         }
 
-        [HttpDelete]
+        [HttpPatch]
+        public ActionResult AtualizarDadosOrcamento(int id, [FromBody] UpdateOrcamentoDto updateOrcamentoDto)
+        {
+            var orcamento = _context.Orcamento
+                .Include(o => o.Produtos)
+                .FirstOrDefault(x => x.Id == id);
+
+            if(orcamento.Quantidade != updateOrcamentoDto.Quantidade)
+            {
+                var valorTotal = updateOrcamentoDto.Quantidade * orcamento.Produtos.Valor;
+                orcamento.ValorTotal = valorTotal;
+               
+                _context.Update(orcamento);
+                
+            }
+
+            if(orcamento.Produtos.Nome != updateOrcamentoDto.Produtos.Nome 
+                && orcamento.Vendedor.Nome != updateOrcamentoDto.Vendedor.Nome)
+            {
+                _context.Update(orcamento);
+            }
+
+            _context.SaveChanges();
+
+            return Ok(orcamento);
+        }
+
+         [HttpDelete]
         public ActionResult ExcluiOrcamento(int id)
         {
             var orcamento = _context.Orcamento.FirstOrDefault(x => x.Id == id);

@@ -14,7 +14,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<OrcamentoService, OrcamentoService>();
-builder.Services.AddDbContext<OrcamentoContext>(options => options.UseLazyLoadingProxies().UseSqlServer(builder.Configuration.GetConnectionString("OrcamentoApi")));
+builder.Services.AddDbContext<OrcamentoContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("OrcamentoApi")));
 
 
 builder.Services.AddSwaggerGen(c =>
