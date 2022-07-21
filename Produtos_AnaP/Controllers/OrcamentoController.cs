@@ -15,12 +15,18 @@ namespace OrcamentoApi.Controllers
         private readonly ILogger<OrcamentoController> _logger;
         private readonly OrcamentoService _orcamentoService;
         private readonly OrcamentoContext _context;
+        private readonly IUrlHelper _urlHelper;
 
-        public OrcamentoController(ILogger<OrcamentoController> logger, OrcamentoService orcamentoService, OrcamentoContext context)
+        public OrcamentoController(ILogger<OrcamentoController> logger, OrcamentoService orcamentoService, OrcamentoContext context, IUrlHelper urlHelper)
         {
             _logger = logger;
             _orcamentoService = orcamentoService;
             _context = context;
+            _urlHelper = urlHelper;
+        }
+        private void GerarLinks(Orcamento orcamento)
+        {
+            orcamento.Links.Add(new LinkDTO(_urlHelper.Link(nameof(GetOrcamentos), new { id = orcamento.Id }), rel: "self", metodo: "GET"));           
         }
 
         [HttpPost]
@@ -48,10 +54,18 @@ namespace OrcamentoApi.Controllers
             return NotFound();
         }
 
-        [HttpGet("GetAll")]
-        public List<Orcamento> GetAllOrcamentos()
+        [HttpGet(Name = nameof(GetOrcamentos))]
+        public async Task<ActionResult<ColecaoRecursos<Orcamento>>> GetOrcamentos()
         {
-            return _context.Orcamento.ToList();
+            var orcamentos = await _context.Orcamento
+                .Include(o => o.Produtos)
+                .Include(o => o.Vendedor).ToListAsync();
+            orcamentos.ForEach(o => GerarLinks(o));
+
+            var resultado = new ColecaoRecursos<Orcamento>(orcamentos);
+            resultado.Links.Add(new LinkDTO(_urlHelper.Link(nameof(GetOrcamentos), new { }), rel: "self", metodo: "GET"));
+            
+            return resultado;
         }
 
         [HttpPut("{id}")]
@@ -78,7 +92,6 @@ namespace OrcamentoApi.Controllers
 
                 return Ok(orcamento);
             }
-
             return BadRequest();
         }
 

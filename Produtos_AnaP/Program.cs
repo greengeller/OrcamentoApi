@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using OrcamentoApi;
 using OrcamentoApi.Data;
@@ -15,7 +18,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<OrcamentoService, OrcamentoService>();
 builder.Services.AddDbContext<OrcamentoContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("OrcamentoApi")));
-
+builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>()
+               .AddScoped<IUrlHelper>(x => x.GetRequiredService<IUrlHelperFactory>()
+               .GetUrlHelper(x.GetRequiredService<IActionContextAccessor>().ActionContext));
 
 builder.Services.AddSwaggerGen(c =>
 {

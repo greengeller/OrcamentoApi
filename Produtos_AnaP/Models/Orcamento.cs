@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace OrcamentoApi.Models
 {
-    public class Orcamento
+    public class Orcamento : Recurso
     {
         public Orcamento()
         {
