@@ -10,7 +10,6 @@ namespace OrcamentoApi.Controllers63
     public class VendedorController : ControllerBase
     {
         private readonly OrcamentoContext _context;
-
         public VendedorController(OrcamentoContext context, OrcamentoService orcamentoService)
         {
             _context = context;
@@ -83,6 +82,5 @@ namespace OrcamentoApi.Controllers63
             _context.SaveChanges();
             return Ok();
         }
-
     }
 }

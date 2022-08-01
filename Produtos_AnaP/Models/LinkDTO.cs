@@ -1,5 +1,6 @@
 ﻿namespace OrcamentoApi.Models
 {
+    //HATEOAS
     public class LinkDTO
     {
         public int Id { get; private set; }

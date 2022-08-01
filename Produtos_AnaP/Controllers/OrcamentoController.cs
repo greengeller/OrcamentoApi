@@ -16,7 +16,6 @@ namespace OrcamentoApi.Controllers
         private readonly OrcamentoService _orcamentoService;
         private readonly OrcamentoContext _context;
         private readonly IUrlHelper _urlHelper;
-
         public OrcamentoController(ILogger<OrcamentoController> logger, OrcamentoService orcamentoService, OrcamentoContext context, IUrlHelper urlHelper)
         {
             _logger = logger;
@@ -24,6 +23,8 @@ namespace OrcamentoApi.Controllers
             _context = context;
             _urlHelper = urlHelper;
         }
+       
+        //HATEOAS
         private void GerarLinks(Orcamento orcamento)
         {
             orcamento.Links.Add(new LinkDTO(_urlHelper.Link(nameof(GetOrcamentos), new { id = orcamento.Id }), rel: "self", metodo: "GET"));           
@@ -53,7 +54,7 @@ namespace OrcamentoApi.Controllers
             }
             return NotFound();
         }
-
+                   
         [HttpGet(Name = nameof(GetOrcamentos))]
         public async Task<ActionResult<ColecaoRecursos<Orcamento>>> GetOrcamentos()
         {
@@ -116,7 +117,7 @@ namespace OrcamentoApi.Controllers
             return Ok(orcamento);
         }
 
-         [HttpDelete]
+        [HttpDelete]
         public ActionResult ExcluiOrcamento(int id)
         {
             var orcamento = _context.Orcamento.FirstOrDefault(x => x.Id == id);

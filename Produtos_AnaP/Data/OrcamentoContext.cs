@@ -16,14 +16,7 @@ namespace OrcamentoApi.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            //modelBuilder.Entity<Produtos>()
-            //    .HasOne(p => p.Orcamento);
-            //    //.HasKey(t => t.Id)
-
-
-            //    HasKey(t => t.Id);
-
-            modelBuilder.Entity<Orcamento>()
+                 modelBuilder.Entity<Orcamento>()
                 .ToTable("Orcamentos");
 
             modelBuilder.Entity<Orcamento>()
