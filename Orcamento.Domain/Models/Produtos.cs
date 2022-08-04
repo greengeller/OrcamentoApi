@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace OrcamentoApi.Models
+namespace OrcamentoApi.Domain.Models
 {
     public class Produtos
     {

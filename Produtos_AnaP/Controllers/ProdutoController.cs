@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OrcamentoApi.Data;
-using OrcamentoApi.Models;
+using OrcamentoApi.Domain.Models;
+using OrcamentoApi.Infra.Data.Context;
 
 namespace OrcamentoApi.Controllers
 {

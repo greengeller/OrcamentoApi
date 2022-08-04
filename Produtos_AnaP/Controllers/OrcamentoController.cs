@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OrcamentoApi.Data;
 using OrcamentoApi.Data.Dtos;
-using OrcamentoApi.Models;
-using OrcamentoApi.Request;
+using OrcamentoApi.Domain.Interfaces;
+using OrcamentoApi.Domain.Models;
+using OrcamentoApi.Infra.Data.Context;
 using OrcamentoApi.Service;
 
 namespace OrcamentoApi.Controllers
@@ -14,6 +15,7 @@ namespace OrcamentoApi.Controllers
     {
         private readonly ILogger<OrcamentoController> _logger;
         private readonly OrcamentoService _orcamentoService;
+        //private readonly IOrcamentoService _service;
         private readonly OrcamentoContext _context;
         private readonly IUrlHelper _urlHelper;
         public OrcamentoController(ILogger<OrcamentoController> logger, OrcamentoService orcamentoService, OrcamentoContext context, IUrlHelper urlHelper)
@@ -31,12 +33,13 @@ namespace OrcamentoApi.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Orcamento> CriarOrcamento([FromBody] OrcamentoRequest orcamentoRequest)
+        [AllowAnonymous]
+        public ActionResult CriarOrcamento([FromBody] CreateOrcamentoDto orcamentoDto)
         {
             _logger.LogInformation("Start inserting Orcamentos");
 
-            var produtos = _context.Produtos.FirstOrDefault(x => x.Nome == orcamentoRequest.NomeProduto);
-            var quantidadeProduto = orcamentoRequest.Quantidade;
+            var produtos = _context.Produtos.FirstOrDefault(x => x.Nome == orcamentoDto.NomeProduto);
+            var quantidadeProduto = orcamentoDto.Quantidade;
             var random = new Random();
             var vendedores = _context.Vendedor.ToList();
 
@@ -45,9 +48,8 @@ namespace OrcamentoApi.Controllers
                 var orcamento = _orcamentoService.AdicionaOrcamento(produtos, vendedores[random.Next(vendedores.Count - 1)], quantidadeProduto);
                 if (orcamento != null)
                 {
-                    _context.Add(orcamento);
-                    _context.SaveChanges();
-                    _logger.LogInformation("Success inserting Orcamentos");
+
+                    _logger.LogInformation("Success inserting Orçamentos");
 
                     return Ok(orcamento);
                 }
@@ -56,17 +58,18 @@ namespace OrcamentoApi.Controllers
         }
                    
         [HttpGet(Name = nameof(GetOrcamentos))]
+        [AllowAnonymous]
         public async Task<ActionResult<ColecaoRecursos<Orcamento>>> GetOrcamentos()
         {
-            var orcamentos = await _context.Orcamento
-                .Include(o => o.Produtos)
-                .Include(o => o.Vendedor).ToListAsync();
-            orcamentos.ForEach(o => GerarLinks(o));
-
-            var resultado = new ColecaoRecursos<Orcamento>(orcamentos);
-            resultado.Links.Add(new LinkDTO(_urlHelper.Link(nameof(GetOrcamentos), new { }), rel: "self", metodo: "GET"));
+            var orcamento = _orcamentoService.GetOrcamento();
+            return Ok(orcamento);
             
-            return resultado;
+            //orcamentos.ForEach(o => GerarLinks(o));
+
+            //var resultado = new ColecaoRecursos<Orcamento>(orcamentos);
+            //resultado.Links.Add(new LinkDTO(_urlHelper.Link(nameof(GetOrcamentos), new { }), rel: "self", metodo: "GET"));
+
+            //return resultado;
         }
 
         [HttpPut("{id}")]

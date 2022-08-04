@@ -1,4 +1,4 @@
-﻿using OrcamentoApi.Models;
+﻿using OrcamentoApi.Domain.Models;
 
 namespace OrcamentoApi.Data.Dtos
 {

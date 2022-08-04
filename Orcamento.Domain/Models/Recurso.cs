@@ -1,4 +1,4 @@
-﻿namespace OrcamentoApi.Models
+﻿namespace OrcamentoApi.Domain.Models
 {
     //HATEOAS
     public class Recurso

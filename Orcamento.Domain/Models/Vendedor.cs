@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace OrcamentoApi.Models
-{
+namespace OrcamentoApi.Domain.Models
+{ 
     public class Vendedor
     {
         public Vendedor()

@@ -4,17 +4,28 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using OrcamentoApi;
-using OrcamentoApi.Data;
+using OrcamentoApi.Domain.Interfaces;
+using OrcamentoApi.Infra.Data.Context;
+using OrcamentoApi.Infra.Data.Repository;
 using OrcamentoApi.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<RabbitMqConfiguration>(builder.Configuration.GetSection("RabbitMqConfiguration"));
 
-// Add services to the container.
-
-builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+// Add services to the container.
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddControllers();
+builder.Services.AddScoped<OrcamentoService, OrcamentoService>();
+builder.Services.AddScoped<IOrcamentoService, OrcamentoService>();
+builder.Services.AddScoped<IOrcamentoRepository, OrcamentoRepository>();
+
+builder.Services.AddDbContext<OrcamentoContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("OrcamentoApi")));
+
+
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -51,8 +62,6 @@ builder.Services.AddSwaggerGen(c =>
     c.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
-builder.Services.AddScoped<OrcamentoService, OrcamentoService>();
-builder.Services.AddDbContext<OrcamentoContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("OrcamentoApi")));
 
 builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>()
                .AddScoped<IUrlHelper>(x => x.GetRequiredService<IUrlHelperFactory>()

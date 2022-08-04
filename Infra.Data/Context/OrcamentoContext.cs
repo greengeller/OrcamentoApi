@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OrcamentoApi.Models;
+using OrcamentoApi.Domain.Models;
 
-namespace OrcamentoApi.Data
+namespace OrcamentoApi.Infra.Data.Context
 {
     public class OrcamentoContext : DbContext
     {

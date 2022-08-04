@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OrcamentoApi.Data;
-using OrcamentoApi.Models;
+using OrcamentoApi.Domain.Models;
+using OrcamentoApi.Infra.Data.Context;
 using OrcamentoApi.Service;
 
 namespace OrcamentoApi.Controllers63
@@ -35,7 +35,7 @@ namespace OrcamentoApi.Controllers63
                             where Orcamento.Vendedor.Id == id
                             select Orcamento.ValorTotal;
                 var somaValorTotal = query.Sum();
-                VendedorResponse vendedorResponse = new(somaValorTotal)
+                VendedorResponse vendedorResponse = new()
                 {
                     Id = id,
                     Nome = vendedor.Nome

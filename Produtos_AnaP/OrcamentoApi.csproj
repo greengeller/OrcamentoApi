@@ -28,6 +28,12 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Infra.Data\OrcamentoApi.Infra.Data.csproj" />
+    <ProjectReference Include="..\Orcamento.Domain\OrcamentoApi.Domain.csproj" />
+    <ProjectReference Include="..\Orcamento.Service\OrcamentoApi.Service.csproj" />
+  </ItemGroup>
+
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

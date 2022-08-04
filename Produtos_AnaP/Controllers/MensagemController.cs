@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OrcamentoApi.Models;
+using OrcamentoApi.Domain.Models;
 using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
