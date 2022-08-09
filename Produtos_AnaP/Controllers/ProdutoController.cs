@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OrcamentoApi.Domain.Models;
-using OrcamentoApi.Infra.Data.Context;
+using OrcamentoApi.Service;
 
 namespace OrcamentoApi.Controllers
 {
@@ -8,67 +9,77 @@ namespace OrcamentoApi.Controllers
     [Route("[controller]")]
     public class ProdutoController : ControllerBase
     {
-        private readonly OrcamentoContext _context;
-        public ProdutoController(OrcamentoContext context)
+        private readonly BaseService<Produtos> _baseService;
+        public ProdutoController(BaseService<Produtos> baseService)
         {
-            _context = context;
+            _baseService = baseService;
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult GetAllProduto()
         {
-            var produto = _context.Produtos;
+            var produto = _baseService.Get();
+            if(produto == null)
+            {
+                return NotFound("Lista Vazia de Produtos");
+            }
             return Ok(produto);
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public IActionResult GetProduto(int id)
         {
-            var produto = _context.Produtos.FirstOrDefault(x => x.Id == id);
-            if (produto != null)
+            var produto = _baseService.GetById(id);
+            if (produto == null)
             {
-                return Ok(produto);
+                return NotFound("Produto Não Existe");                
             }
-
-            return NotFound("Esse Produto não existe");
+            return Ok(produto);
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public IActionResult AdicionaProduto([FromBody] Produtos produtos)
         {
-            _context.Add(produtos);
-            _context.SaveChanges();
-            if (produtos != null)
+            _baseService.Add(produtos);
+            if (produtos == null)
             {
-                return Ok(produtos);
+                return NotFound("Produto Não Existe");                
             }
-            return NotFound();
+            return Ok($"Produto {produtos} foi adicionado com sucesso");
         }
 
         [HttpPut]
+        [AllowAnonymous]
         public IActionResult AtualizarProduto(int id, [FromBody] Produtos novoProduto)
         {
-            var produto = _context.Produtos.FirstOrDefault(x => x.Id == id);
-
-            if (id != null)
-            {               
-                produto.Nome = novoProduto.Nome;
-                produto.Valor = novoProduto.Valor;
-
-                _context.Produtos.Update(produto);
-                _context.SaveChanges();
-                return Ok(produto);
+            var produto = _baseService.GetById(id);
+            if (produto == null)
+            {
+                return NotFound("Produto Não Existe");
             }
-            return NotFound();
+
+            produto.Nome = novoProduto.Nome;
+            produto.Valor = novoProduto.Valor;
+
+            _baseService.Update(produto);
+            return Ok($"Produto {novoProduto} foi atualizado com sucesso");
         }
 
         [HttpDelete]
+        [AllowAnonymous]
         public IActionResult ExcluirProduto(int id)
         {
-            var produto = _context.Produtos.FirstOrDefault(x => x.Id == id);
-            _context.Produtos.Remove(produto);
-            _context.SaveChanges();
-            return Ok();
+            var produto = _baseService.GetById(id);
+
+            if(produto == null)
+            {
+                return NotFound("Produto Não Existe");
+            }
+            _baseService.Delete(id);
+            return Ok($"Produto {produto} foi excluído com sucesso");
         }
     }
 }

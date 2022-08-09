@@ -7,7 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Request\**" />
+    <Content Remove="Request\**" />
+    <EmbeddedResource Remove="Request\**" />
+    <None Remove="Request\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Controllers\CadastroController.cs" />
+    <Compile Remove="OrcamentoResponse.cs" />
     <Compile Remove="ProcessMessageConsumer.cs" />
     <Compile Remove="RestClient.cs" />
     <Compile Remove="RestRequest.cs" />
@@ -29,7 +37,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Infra.Data\OrcamentoApi.Infra.Data.csproj" />
     <ProjectReference Include="..\Orcamento.Domain\OrcamentoApi.Domain.csproj" />
     <ProjectReference Include="..\Orcamento.Service\OrcamentoApi.Service.csproj" />
   </ItemGroup>

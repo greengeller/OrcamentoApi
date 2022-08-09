@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using OrcamentoApi;
 using OrcamentoApi.Domain.Interfaces;
+using OrcamentoApi.Domain.Models;
 using OrcamentoApi.Infra.Data.Context;
 using OrcamentoApi.Infra.Data.Repository;
 using OrcamentoApi.Service;
@@ -22,10 +23,19 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<OrcamentoService, OrcamentoService>();
 builder.Services.AddScoped<IOrcamentoService, OrcamentoService>();
 builder.Services.AddScoped<IOrcamentoRepository, OrcamentoRepository>();
+builder.Services.AddScoped<OrcamentoRepository, OrcamentoRepository>();
+builder.Services.AddScoped<BaseService<Produtos>, BaseService<Produtos>>();
+builder.Services.AddScoped<BaseService<Vendedor>, BaseService<Vendedor>>();
+builder.Services.AddScoped<BaseRepository<Produtos>, BaseRepository<Produtos>>();
+builder.Services.AddScoped<BaseRepository<Vendedor>, BaseRepository<Vendedor>>();
+builder.Services.AddScoped<IBaseRepository<Produtos>, BaseRepository<Produtos>>();
+builder.Services.AddScoped<IBaseRepository<Vendedor>, BaseRepository<Vendedor>>();
+
+builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>()
+               .AddScoped<IUrlHelper>(x => x.GetRequiredService<IUrlHelperFactory>()
+               .GetUrlHelper(x.GetRequiredService<IActionContextAccessor>().ActionContext));
 
 builder.Services.AddDbContext<OrcamentoContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("OrcamentoApi")));
-
-
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -61,11 +71,6 @@ builder.Services.AddSwaggerGen(c =>
     //quando usamos o Swagger, por padrão, todas as ações exigirão um token JWT.
     c.OperationFilter<SecurityRequirementsOperationFilter>();
 });
-
-
-builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>()
-               .AddScoped<IUrlHelper>(x => x.GetRequiredService<IUrlHelperFactory>()
-               .GetUrlHelper(x.GetRequiredService<IActionContextAccessor>().ActionContext));
 
 builder.Services.AddSwaggerGen(c =>
 {

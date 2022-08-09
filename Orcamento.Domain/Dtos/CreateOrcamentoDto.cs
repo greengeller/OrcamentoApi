@@ -1,10 +1,9 @@
-﻿using OrcamentoApi.Domain.Models;
+﻿using OrcamentoApi.Domain.Entities;
 
 namespace OrcamentoApi.Data.Dtos
 {
-    public class CreateOrcamentoDto
+    public class CreateOrcamentoDto 
     {
-        //public int Id { get; set; }
         public string NomeProduto { get; set; }
         public int Quantidade { get; set; }
        

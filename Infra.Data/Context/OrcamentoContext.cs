@@ -23,8 +23,7 @@ namespace OrcamentoApi.Infra.Data.Context
                 .HasOne(orcamento => orcamento.Vendedor);
 
             modelBuilder.Entity<Orcamento>()
-                 .HasOne(orcamento => orcamento.Produtos);           
-
+                 .HasOne(orcamento => orcamento.Produtos);       
         }
     }
 }

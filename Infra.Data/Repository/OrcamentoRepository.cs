@@ -7,7 +7,7 @@ namespace OrcamentoApi.Infra.Data.Repository
 {
     public class OrcamentoRepository : IOrcamentoRepository
     {
-        protected readonly OrcamentoContext _context;
+        protected readonly OrcamentoContext _context;        
         public OrcamentoRepository(OrcamentoContext context)
         {
             _context = context;
@@ -17,23 +17,24 @@ namespace OrcamentoApi.Infra.Data.Repository
             _context.Set<Orcamento>().Add(orc);
             _context.SaveChanges();
         }
-        public void Update(Orcamento orc)
-        {
-            _context.Entry(orc).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+        public void Update(int id, Orcamento orc)
+        {                       
+            _context.Entry(orc).State = EntityState.Modified;
             _context.SaveChanges();
         }
         public void Delete(int id)
         {
-            _context.Set<Orcamento>().Remove(Select(id));
+            _context.Set<Orcamento>().Remove(SelectId(id));
             _context.SaveChanges();
         }
-        public IList<Orcamento> Select() =>
+        public List<Orcamento> Select() =>
                 _context.Orcamento
                 .Include(o => o.Produtos)
                 .Include(o => o.Vendedor).ToList();
-
-        public Orcamento Select(int id) =>
-            _context.Set<Orcamento>().Find(id);
+        public Orcamento SelectId(int id) =>
+                _context.Orcamento
+                .Include(o => o.Produtos)
+                .Include(o => o.Vendedor).First(x => x.Id == id);
     }   
 }
 

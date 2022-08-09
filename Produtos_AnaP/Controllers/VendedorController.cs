@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OrcamentoApi.Domain.Models;
 using OrcamentoApi.Infra.Data.Context;
 using OrcamentoApi.Service;
@@ -9,78 +10,78 @@ namespace OrcamentoApi.Controllers63
     [Route("[controller]")]
     public class VendedorController : ControllerBase
     {
+        private readonly BaseService<Vendedor> _baseService;
         private readonly OrcamentoContext _context;
-        public VendedorController(OrcamentoContext context, OrcamentoService orcamentoService)
+        public VendedorController(BaseService<Vendedor> baseService, OrcamentoContext context)
         {
+            _baseService = baseService;
             _context = context;
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult GetVendedor()
         {
-            var vendedor = _context.Vendedor;
+            var vendedor = _baseService.Get();
+            if(vendedor == null)
+            {
+                return NotFound("Lista de Vendedor Vazia");
+            }              
             return Ok(vendedor);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetVendedor(int id)
+        [AllowAnonymous]
+        public IActionResult GetComissaoVendedor(int id)
         {
-            var vendedor = _context.Vendedor.FirstOrDefault(x => x.Id == id);
-
+            var vendedor = _baseService.GetById(id);
             if (vendedor != null)
             {
-                var orcamento = _context.Orcamento;
-                var query = from Orcamento
-                            in orcamento
-                            where Orcamento.Vendedor.Id == id
-                            select Orcamento.ValorTotal;
-                var somaValorTotal = query.Sum();
-                VendedorResponse vendedorResponse = new()
-                {
-                    Id = id,
-                    Nome = vendedor.Nome
-                };
-
+                var vendedorResponse = _baseService.CalculaComissao(vendedor);
                 return Ok(vendedorResponse);
             }
-            return NotFound("Esse vendedor não existe");
+            return NotFound("Vendedor Não Existe");
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public IActionResult AdicionaVendedor([FromBody] Vendedor vendedor)
         {
             if (vendedor != null)
             {
-                _context.Add(vendedor);
-                _context.SaveChanges();
-                return Ok(vendedor);
+                _baseService.Add(vendedor);
+                return Ok($"Vendedor {vendedor} foi adicionado com sucesso"); ;
             }
             return NotFound();
         }
 
         [HttpPut]
+        [AllowAnonymous]
         public IActionResult AtualizarVendedor(int id, [FromBody] string nome)
         {
-            var vendedor = _context.Vendedor.FirstOrDefault(x => x.Id == id);
+            var vendedor = _baseService.GetById(id);
 
-            if (id != null && vendedor != null)
+            if (vendedor != null)
             {
                 vendedor.Nome = nome;
 
-                _context.Vendedor.Update(vendedor);
-                _context.SaveChanges();
-                return Ok(vendedor);
+                _baseService.Update(vendedor);
+                return Ok($"Vendedor {vendedor} foi atualizado com sucesso");
             }
             return NotFound();
         }
 
         [HttpDelete]
+        [AllowAnonymous]
         public IActionResult ExcluirVendedor(int id)
         {
-            var vendedor = _context.Vendedor.FirstOrDefault(x => x.Id == id);
-            _context.Vendedor.Remove(vendedor);
-            _context.SaveChanges();
-            return Ok();
+            var vendedor = _baseService.GetById(id);
+            if (vendedor == null)
+            {
+                return NotFound("Vendedor Não Existe");
+            }
+            _baseService.Delete(id);
+            return Ok($"Vendedor {vendedor} foi excluído com sucesso");
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using OrcamentoApi.Domain.Models;
+﻿using OrcamentoApi.Data.Dtos;
+using OrcamentoApi.Domain.Models;
 
 namespace OrcamentoApi.Domain.Interfaces
 {
@@ -6,12 +7,12 @@ namespace OrcamentoApi.Domain.Interfaces
     {
         void Insert(Orcamento orc);
 
-        void Update(Orcamento orc);
+        void Update(int id, Orcamento orcamento);
 
         void Delete(int id);
 
-        IList<Orcamento> Select();
+        List<Orcamento> Select();
 
-        Orcamento Select(int id);
+        Orcamento SelectId(int id);
     }
 }

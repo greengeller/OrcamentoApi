@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using OrcamentoApi.Domain.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace OrcamentoApi.Domain.Models
 {
-    public class Orcamento : Recurso
+    public class Orcamento : Recurso, IBaseEntity
     {
         public Orcamento()
         {
@@ -10,8 +11,7 @@ namespace OrcamentoApi.Domain.Models
         public Orcamento(double valor, int quantidadeProduto )
         {
             ValorTotal = valor * quantidadeProduto;
-        }
-        
+        }        
         public Orcamento(Vendedor vendedor, Produtos produtos, int quantidadeProduto)
         {
             Vendedor = vendedor;
@@ -19,7 +19,6 @@ namespace OrcamentoApi.Domain.Models
             Quantidade = quantidadeProduto;
             ValorTotal = produtos.Valor * quantidadeProduto;
         }
-
         [Key]
         public int Id { get; set; }      
         public virtual Vendedor Vendedor { get; set; }            
