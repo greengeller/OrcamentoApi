@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OrcamentoApi.Domain.Interfaces;
 using OrcamentoApi.Domain.Models;
 using OrcamentoApi.Service;
 
@@ -9,8 +10,8 @@ namespace OrcamentoApi.Controllers
     [Route("[controller]")]
     public class ProdutoController : ControllerBase
     {
-        private readonly BaseService<Produtos> _baseService;
-        public ProdutoController(BaseService<Produtos> baseService)
+        private readonly IProdutoService _baseService;
+        public ProdutoController(IProdutoService baseService)
         {
             _baseService = baseService;
         }
@@ -31,7 +32,7 @@ namespace OrcamentoApi.Controllers
         [AllowAnonymous]
         public IActionResult GetProduto(int id)
         {
-            var produto = _baseService.GetById(id);
+            var produto = _baseService.GetId(id);
             if (produto == null)
             {
                 return NotFound("Produto Não Existe");                
@@ -55,7 +56,7 @@ namespace OrcamentoApi.Controllers
         [AllowAnonymous]
         public IActionResult AtualizarProduto(int id, [FromBody] Produtos novoProduto)
         {
-            var produto = _baseService.GetById(id);
+            var produto = _baseService.GetId(id);
             if (produto == null)
             {
                 return NotFound("Produto Não Existe");
@@ -64,7 +65,7 @@ namespace OrcamentoApi.Controllers
             produto.Nome = novoProduto.Nome;
             produto.Valor = novoProduto.Valor;
 
-            _baseService.Update(produto);
+            _baseService.Update(id, produto);
             return Ok($"Produto {novoProduto} foi atualizado com sucesso");
         }
 
@@ -72,7 +73,7 @@ namespace OrcamentoApi.Controllers
         [AllowAnonymous]
         public IActionResult ExcluirProduto(int id)
         {
-            var produto = _baseService.GetById(id);
+            var produto = _baseService.GetId(id);
 
             if(produto == null)
             {

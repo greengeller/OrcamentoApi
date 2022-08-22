@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OrcamentoApi.Domain.Interfaces;
 using OrcamentoApi.Domain.Models;
-using OrcamentoApi.Infra.Data.Context;
 using OrcamentoApi.Service;
 
 namespace OrcamentoApi.Controllers63
@@ -10,12 +10,11 @@ namespace OrcamentoApi.Controllers63
     [Route("[controller]")]
     public class VendedorController : ControllerBase
     {
-        private readonly BaseService<Vendedor> _baseService;
-        private readonly OrcamentoContext _context;
-        public VendedorController(BaseService<Vendedor> baseService, OrcamentoContext context)
+        private readonly IVendedorService _baseService;
+       
+        public VendedorController(IVendedorService baseService)
         {
-            _baseService = baseService;
-            _context = context;
+            _baseService = baseService;            
         }
 
         [HttpGet]
@@ -34,10 +33,10 @@ namespace OrcamentoApi.Controllers63
         [AllowAnonymous]
         public IActionResult GetComissaoVendedor(int id)
         {
-            var vendedor = _baseService.GetById(id);
+            var vendedor = _baseService.GetId(id);
             if (vendedor != null)
             {
-                var vendedorResponse = _baseService.CalculaComissao(vendedor);
+                var vendedorResponse = _baseService.GetComissao(vendedor);
                 return Ok(vendedorResponse);
             }
             return NotFound("Vendedor Não Existe");
@@ -59,13 +58,13 @@ namespace OrcamentoApi.Controllers63
         [AllowAnonymous]
         public IActionResult AtualizarVendedor(int id, [FromBody] string nome)
         {
-            var vendedor = _baseService.GetById(id);
+            var vendedor = _baseService.GetId(id);
 
             if (vendedor != null)
             {
                 vendedor.Nome = nome;
 
-                _baseService.Update(vendedor);
+                _baseService.Update(id, vendedor);
                 return Ok($"Vendedor {vendedor} foi atualizado com sucesso");
             }
             return NotFound();
@@ -75,7 +74,7 @@ namespace OrcamentoApi.Controllers63
         [AllowAnonymous]
         public IActionResult ExcluirVendedor(int id)
         {
-            var vendedor = _baseService.GetById(id);
+            var vendedor = _baseService.GetId(id);
             if (vendedor == null)
             {
                 return NotFound("Vendedor Não Existe");

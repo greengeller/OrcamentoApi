@@ -5,12 +5,23 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using OrcamentoApi;
 using OrcamentoApi.Domain.Interfaces;
-using OrcamentoApi.Domain.Models;
-using OrcamentoApi.Infra.Data.Context;
-using OrcamentoApi.Infra.Data.Repository;
+using OrcamentoApi.Infra.SQL.Context;
+using OrcamentoApi.Infra.SQL.Repository;
 using OrcamentoApi.Service;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers();
+
+builder.Services.AddScoped<IOrcamentoService, OrcamentoService>();
+builder.Services.AddScoped<IProdutoService, ProdutoService>();
+builder.Services.AddScoped<IVendedorService, VendedorService>();
+builder.Services.AddScoped<IOrcamentoRepository, OrcamentoRepository>();
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddScoped<IVendedorRepository, VendedorRepository>();
+
+
 builder.Services.Configure<RabbitMqConfiguration>(builder.Configuration.GetSection("RabbitMqConfiguration"));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -19,23 +30,12 @@ builder.Services.AddEndpointsApiExplorer();
 // Add services to the container.
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddControllers();
-builder.Services.AddScoped<OrcamentoService, OrcamentoService>();
-builder.Services.AddScoped<IOrcamentoService, OrcamentoService>();
-builder.Services.AddScoped<IOrcamentoRepository, OrcamentoRepository>();
-builder.Services.AddScoped<OrcamentoRepository, OrcamentoRepository>();
-builder.Services.AddScoped<BaseService<Produtos>, BaseService<Produtos>>();
-builder.Services.AddScoped<BaseService<Vendedor>, BaseService<Vendedor>>();
-builder.Services.AddScoped<BaseRepository<Produtos>, BaseRepository<Produtos>>();
-builder.Services.AddScoped<BaseRepository<Vendedor>, BaseRepository<Vendedor>>();
-builder.Services.AddScoped<IBaseRepository<Produtos>, BaseRepository<Produtos>>();
-builder.Services.AddScoped<IBaseRepository<Vendedor>, BaseRepository<Vendedor>>();
 
 builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>()
                .AddScoped<IUrlHelper>(x => x.GetRequiredService<IUrlHelperFactory>()
                .GetUrlHelper(x.GetRequiredService<IActionContextAccessor>().ActionContext));
 
-builder.Services.AddDbContext<OrcamentoContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("OrcamentoApi")));
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(b => b.MigrationsAssembly("OrcamentoApi")).UseSqlServer(builder.Configuration.GetConnectionString("OrcamentoApi")));
 
 builder.Services.AddSwaggerGen(c =>
 {

@@ -1,43 +1,35 @@
-﻿using OrcamentoApi.Data.Dtos;
+﻿using OrcamentoApi.Domain.Dtos;
 using OrcamentoApi.Domain.Interfaces;
 using OrcamentoApi.Domain.Models;
-using OrcamentoApi.Infra.Data.Repository;
+using OrcamentoApi.Service;
 
 namespace OrcamentoApi.Service
 {
-    public class OrcamentoService : IOrcamentoService
+    public class OrcamentoService : BaseService<Orcamento>, IOrcamentoService
     {
-        private readonly IOrcamentoRepository _baseRepository;
-        private readonly OrcamentoRepository _orcamentoRepository;
-        private readonly BaseRepository<Produtos> _produtosRepository;
-        private readonly BaseRepository<Vendedor> _vendedorRepository;
-       
-        public OrcamentoService(OrcamentoRepository orcamentoRepository, BaseRepository<Produtos> produtosRepository, BaseRepository<Vendedor> vendedorRepository, IOrcamentoRepository baseRepository)
+        private readonly IOrcamentoRepository _orcamentoRepository;       
+        private readonly IProdutoRepository _produtosRepository;
+        private readonly IVendedorRepository _vendedorRepository;
+        
+        public OrcamentoService(IOrcamentoRepository orcamentoRepository, IProdutoRepository produtosRepository, IVendedorRepository vendedorRepository) : base(orcamentoRepository)
         {
             _orcamentoRepository = orcamentoRepository;
             _produtosRepository = produtosRepository;
             _vendedorRepository = vendedorRepository;
-            _baseRepository = baseRepository;
+            
         }
-        public Orcamento AdicionaOrcamento(Produtos produtos, Vendedor vendedor, int quantidadeProduto)
+        public Orcamento Add(Vendedor vendedor, Produtos produtos, int quantidade)
         {
-            var orcamento = new Orcamento(vendedor, produtos, quantidadeProduto);
+            var orcamento = new Orcamento(vendedor, produtos, quantidade );
             _orcamentoRepository.Insert(orcamento);
 ;            return orcamento;
         }
-        public List<Orcamento> GetOrcamento()
+        
+        public Orcamento Update(int id, UpdateOrcamentoDto orcDto)
         {
-            return _orcamentoRepository.Select().ToList();            
-        }
-        public Orcamento GetId(int id)
-        {
-            return _orcamentoRepository.SelectId(id);
-        }
-        public Orcamento AtualizaOrcamento(int id, UpdateOrcamentoDto orcDto)
-        {
-            var orcamento = _orcamentoRepository.SelectId(id);
-            var produto = _produtosRepository.SelectName(orcDto.Produtos.Nome);            
-            var vendedor = _vendedorRepository.SelectName(orcDto.Vendedor.Nome);
+            var orcamento = _orcamentoRepository.GetId(id);
+            var produto = _produtosRepository.GetName(orcDto.Produtos.Nome);            
+            var vendedor = _vendedorRepository.GetName(orcDto.Vendedor.Nome);
             orcamento.Produtos = produto;
             orcamento.Vendedor = vendedor;
             var valorTotal = orcDto.Quantidade * produto.Valor;
@@ -47,9 +39,9 @@ namespace OrcamentoApi.Service
             _orcamentoRepository.Update(id, orcamento);
             return orcamento;
         }
-        public Orcamento AtualizaQuantidade(int id, UpdateQuantidadeDto orcDto)
+        public Orcamento Updatequantidade(int id, UpdateQuantidadeDto orcDto)
         {
-            var orcamento = _orcamentoRepository.SelectId(id);
+            var orcamento = _orcamentoRepository.GetId(id);
             
             if (orcamento.Quantidade != orcDto.Quantidade)
             {
@@ -62,12 +54,7 @@ namespace OrcamentoApi.Service
             }
             return orcamento;    
         }
-        public Orcamento ExcluiOrcamento(int id)
-        {
-            var orcamento =_orcamentoRepository.SelectId(id);
-          
-            _baseRepository.Delete(id);
-            return orcamento;
-        }
+        public IList<Orcamento> Get() => _orcamentoRepository.Get();
+        public Orcamento GetId(int id) => _orcamentoRepository.GetId(id);
     }
 }

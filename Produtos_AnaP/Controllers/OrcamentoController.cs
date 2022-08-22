@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OrcamentoApi.Data.Dtos;
+using OrcamentoApi.Domain.Dtos;
+using OrcamentoApi.Domain.Interfaces;
 using OrcamentoApi.Domain.Models;
-using OrcamentoApi.Infra.Data.Context;
 using OrcamentoApi.Service;
 
 namespace OrcamentoApi.Controllers
@@ -12,19 +12,18 @@ namespace OrcamentoApi.Controllers
     public class OrcamentoController : ControllerBase
     {
         private readonly ILogger<OrcamentoController> _logger;
-        private readonly OrcamentoService _orcamentoService;
-        private readonly OrcamentoContext _context;
+        private readonly IOrcamentoService _orcamentoService;        
         private readonly IUrlHelper _urlHelper;
-        private readonly BaseService<Produtos> _produtosService;
-        private readonly BaseService<Vendedor> _vendedorService;
-        public OrcamentoController(ILogger<OrcamentoController> logger, OrcamentoService orcamentoService, OrcamentoContext context, IUrlHelper urlHelper, BaseService<Vendedor> vendedorService, BaseService<Produtos> produtosService)
+        private readonly IProdutoService _produtosService;
+        private readonly IVendedorService _vendedorService;
+
+        public OrcamentoController(ILogger<OrcamentoController> logger, IOrcamentoService orcamentoService, IUrlHelper urlHelper, IProdutoService produtosService, IVendedorService vendedorService)
         {
             _logger = logger;
             _orcamentoService = orcamentoService;
-            _context = context;
             _urlHelper = urlHelper;
-            _vendedorService = vendedorService;
             _produtosService = produtosService;
+            _vendedorService = vendedorService;
         }
 
         //HATEOAS
@@ -39,14 +38,14 @@ namespace OrcamentoApi.Controllers
         {
             _logger.LogInformation("Start inserting Orçamentos");
 
-            var produtos = _produtosService.GetByName(orcamentoDto.NomeProduto);
+            var produtos = _produtosService.GetName(orcamentoDto.NomeProduto);
             var quantidadeProduto = orcamentoDto.Quantidade;
             var random = new Random();
             var vendedores = _vendedorService.Get();
 
             if (produtos != null)
             {
-                var orcamento = _orcamentoService.AdicionaOrcamento(produtos, vendedores[random.Next(vendedores.Count - 1)], quantidadeProduto);
+                var orcamento = _orcamentoService.Add(vendedores[random.Next(vendedores.Count - 1)], produtos, quantidadeProduto);
                 if (orcamento != null)
                 {
                     _logger.LogInformation("Success inserting Orçamentos");
@@ -60,7 +59,7 @@ namespace OrcamentoApi.Controllers
         [AllowAnonymous]
         public ActionResult<ColecaoRecursos<Orcamento>>GetOrcamentos()
         {
-            var orcamentos = _orcamentoService.GetOrcamento().ToList();           
+            var orcamentos = _orcamentoService.Get().ToList();           
 
             orcamentos.ForEach(o => GerarLinks(o));
 
@@ -79,7 +78,7 @@ namespace OrcamentoApi.Controllers
             {
                 return NotFound();
             }
-            _orcamentoService.AtualizaOrcamento(id, orcDto);
+            _orcamentoService.Update(id, orcamento);
             return Ok(orcamento);
         }
 
@@ -92,7 +91,7 @@ namespace OrcamentoApi.Controllers
             {
                 return NotFound();
             }
-            _orcamentoService.AtualizaQuantidade(id, orcDto);            
+            _orcamentoService.Update(id, orcamento);            
             return Ok(orcamento);
         }
 
@@ -105,7 +104,7 @@ namespace OrcamentoApi.Controllers
             {
                 return NotFound();           
             }
-            _orcamentoService.ExcluiOrcamento(id);
+            _orcamentoService.Delete(id);
             return Ok("Orçamento Excluído com Sucesso");
         }
     }
